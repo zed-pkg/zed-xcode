@@ -1,0 +1,23 @@
+{
+  "schema": "zed-pkg/ide-integration-conformance/v1",
+  "integration": "xcode",
+  "repository": "zed-pkg/zed-xcode",
+  "contractVersion": 1,
+  "level": {"core": "pass", "nativeShell": "companion-model", "distribution": "repository"},
+  "capabilities": {
+    "multiRootDiscovery": "workspace-model",
+    "manifestDiagnostics": true,
+    "lockDiagnostics": true,
+    "materializationDiagnostics": true,
+    "stagingRecovery": true,
+    "argvExecution": true,
+    "boundedExecution": true,
+    "outputRedaction": true,
+    "explicitMutationConfirmation": true,
+    "versionedInspectAdapter": "pending-zed-cli-191",
+    "nativeUnitTests": true,
+    "repoLocalCI": true
+  },
+  "remaining": ["SwiftUI companion app target", "XcodeKit Source Editor Extension", "App Group cache/entitlements", "clean Xcode instance test", "signed app/appex packaging"],
+  "linearIssue": "DEN-2508"
+}
