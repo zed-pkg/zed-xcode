@@ -16,7 +16,10 @@
     "explicitMutationConfirmation": true,
     "versionedInspectAdapter": "pending-zed-cli-191",
     "nativeUnitTests": true,
-    "repoLocalCI": true
+    "repoLocalCI": true,
+    "immutableWorkflowInputs": true,
+    "fixedRunnerImages": true,
+    "checkoutCredentialsPersisted": false
   },
   "remaining": ["SwiftUI companion app target", "XcodeKit Source Editor Extension", "App Group cache/entitlements", "clean Xcode instance test", "signed app/appex packaging"],
   "linearIssue": "DEN-2508"
