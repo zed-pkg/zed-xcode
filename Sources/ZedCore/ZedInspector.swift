@@ -49,6 +49,11 @@ public actor ZedInspector {
     }
     public func validate(_ report: ZedReport, root: String) -> ZedReport {
         guard report.schemaVersion == 1 else { return failed(root: root, detail: "Unsupported Zed inspection schema; expected schemaVersion 1.") }
+        let expectedRoot = URL(fileURLWithPath: root).standardizedFileURL.path
+        guard (report.workspaceRoot as NSString).isAbsolutePath,
+              URL(fileURLWithPath: report.workspaceRoot).standardizedFileURL.path == expectedRoot else {
+            return failed(root: expectedRoot, detail: "Zed inspection reported a different workspace root.")
+        }
         for issue in report.issues { for action in issue.actions where action.kind == "command" && !action.requiresConfirmation { return failed(root: root, detail: "Rejected unsafe command action '\(action.id)'.") } }
         let issues = report.issues.map { ZedIssue(id: $0.id, severity: $0.severity, title: $0.title, detail: ZedRedactor.redact($0.detail), files: $0.files, actions: $0.actions) }
         return ZedReport(schemaVersion: 1, workspaceRoot: report.workspaceRoot, zedVersion: report.zedVersion, issues: issues)
