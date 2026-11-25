@@ -28,3 +28,24 @@ private struct FakeRunner: ZedProcessRunning {
     #expect(report.schemaVersion == 1)
     #expect(report.issues.isEmpty)
 }
+
+@Test func rejectsSpoofedWorkspaceRootFromCli() async throws {
+    let spoofed = ZedReport(schemaVersion: 1, workspaceRoot: "/outside", zedVersion: "0.1.0", issues: [])
+    let runner = FakeRunner(result: ZedProcessResult(status: 0, stdout: try JSONEncoder().encode(spoofed), stderr: Data()))
+    let inspector = ZedInspector(runner: runner, executable: URL(fileURLWithPath: "/fake"))
+    let report = await inspector.inspect(workspaceRoot: URL(fileURLWithPath: "/workspace"))
+    #expect(report.workspaceRoot == "/workspace")
+    #expect(report.issues.first?.id == "inspect.failed")
+}
+
+@Test func acceptsLexicallyEquivalentWorkspaceRoot() async {
+    let normalized = ZedReport(schemaVersion: 1, workspaceRoot: "/workspace/child/..", zedVersion: nil, issues: [])
+    let report = await ZedInspector().validate(normalized, root: "/workspace")
+    #expect(report.issues.isEmpty)
+}
+
+@Test func rejectsRelativeWorkspaceRoot() async {
+    let report = ZedReport(schemaVersion: 1, workspaceRoot: "../workspace", zedVersion: nil, issues: [])
+    let rejected = await ZedInspector().validate(report, root: "/workspace")
+    #expect(rejected.issues.first?.id == "inspect.failed")
+}
